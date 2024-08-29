@@ -268,10 +268,10 @@ exports.verifyResetOtp = async (req, res) => {
             return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
         }
 
-        // Mark the user as verified for password reset
-        user.isResetVerified = true;
-        user.otp = undefined;
-        user.otpExpires = undefined;
+        // Mark the user as authorized for password reset
+        user.isResetVerified = true;  // This flag should be updated
+        user.otp = undefined;  // Clear the OTP
+        user.otpExpires = undefined;  // Clear the OTP expiration
         await user.save();
 
         res.status(200).json({ success: true, message: "OTP verified. You can now reset your password." });
@@ -279,13 +279,12 @@ exports.verifyResetOtp = async (req, res) => {
         res.status(500).json({ success: false, message: "Error verifying OTP: " + error.message });
     }
 };
-
 exports.resetPassword = async (req, res) => {
     const { email, newPassword } = req.body;
 
     try {
         // Find the user and ensure they are allowed to reset their password
-        const user = await User.findOne({ email, isResetVerified: true });
+        const user = await User.findOne({ email, isResetVerified: true });  // Check if they are verified for reset
 
         if (!user) {
             return res.status(400).json({ success: false, message: "User not authorized for password reset" });
@@ -294,7 +293,7 @@ exports.resetPassword = async (req, res) => {
         // Hash the new password and save
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(newPassword, salt);
-        user.isResetVerified = false; // Reset flag
+        user.isResetVerified = false;  // Reset the flag after password reset
         await user.save();
 
         res.status(200).json({ success: true, message: "Password reset successfully" });
@@ -302,3 +301,6 @@ exports.resetPassword = async (req, res) => {
         res.status(500).json({ success: false, message: "Error resetting password: " + error.message });
     }
 };
+
+
+
