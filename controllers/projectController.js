@@ -55,10 +55,7 @@ exports.getProjectsByUser = async (req, res) => {
         const projects = await Project.find({ userid }).populate('userid', 'username imageUrl');
 
         if (projects.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "No projects found for this user.",
-            });
+            return []
         }
 
         res.status(200).json({
