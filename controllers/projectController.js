@@ -182,3 +182,35 @@ exports.updateProject = async (req, res) => {
        });
  }
 };
+exports.deleteProjectsByUser = async (req, res) => {
+    try {
+        const { userid } = req.params;
+
+        // Check if the userid is provided
+        if (!userid) {
+            return res.status(400).json({
+                error: "UserId is required.",
+            });
+        }
+
+        // Delete all projects associated with the userid
+        const deletedProjects = await Project.deleteMany({ userid });
+
+        // Check if any projects were deleted
+        if (deletedProjects.deletedCount === 0) {
+            return res.status(404).json({
+                message: "No projects found for this user.",
+            });
+        }
+
+        // Return a success message along with the number of deleted projects
+        res.status(200).json({
+            message: `${deletedProjects.deletedCount} project(s) deleted successfully.`,
+        });
+    } catch (error) {
+        console.error("Failed to delete projects by user:", error);
+        return res.status(500).json({
+            error: "Failed to delete projects. Please try again later.",
+        });
+    }
+};

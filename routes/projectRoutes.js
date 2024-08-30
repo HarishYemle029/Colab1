@@ -83,6 +83,10 @@ router.delete('/projects/:projectid', projectController.deleteProject);
 router.get('/projects/:projectid', projectController.getProjectDetails);
 // update project details
 router.put('/projects/:projectid', projectController.updateProject);
+const { deleteProjectsByUser } = require('../controllers/projectController');
+
+// Route to delete all projects by userId
+router.delete('/projects/user/:userid', deleteProjectsByUser);
 
 
 module.exports = router;
