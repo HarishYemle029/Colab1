@@ -26,7 +26,14 @@ const UserSchema = new mongoose.Schema({
     isResetVerified:{
         type: Boolean,
         default: false,
-    }
+    },
+    imageUrl: {
+        type: String,
+        default: function() {
+            return `https://api.dicebear.com/5.x/initials/svg?seed=${encodeURIComponent(this.username || 'default')};`
+        },
+    },
+
 });
 
 

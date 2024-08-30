@@ -4,9 +4,10 @@ const { uploadFileToCloudinary } = require('../configurations/cloudinaryUploader
 const { sendApplicationNotification } = require('../configurations/emailService');
 
 exports.applyToProject = async (req, res) => {
+    console.log('ayya')
     try {
+        console.log(req.body)
         const { projectid, introductionMessage, userid } = req.body;
-
         // Fetch the project to check if it exists and populate host information
         const project = await Project.findById(projectid).populate('hostid');
         if (!project) {
@@ -14,7 +15,9 @@ exports.applyToProject = async (req, res) => {
         }
 
         // Check if the user has already applied to this project
-        const alreadyApplied = project.applications.some(application => application.userid.equals(userid));
+        console.log(project)
+        const alreadyApplied = project.applications.some(application => application.userid === userid);
+        console.log(alreadyApplied)
         if (alreadyApplied) {
             return res.status(400).json({ error: 'You have already applied to this project.' });
         }
@@ -24,6 +27,7 @@ exports.applyToProject = async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: 'User not found.' });
         }
+        console.log("gvbeerhk")
         const applicantUsername = user.username;
         const applicantEmail = user.email;
 
@@ -58,6 +62,7 @@ exports.applyToProject = async (req, res) => {
         });
     } catch (error) {
         console.error('Error while applying to the project:', error);
-        res.status(500).json({ error: 'Internal server error.' });
+        res.status(500).json({ error: 'Internal server error.'});
     }
 };
+
