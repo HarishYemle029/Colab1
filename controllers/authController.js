@@ -116,7 +116,7 @@ exports.sendOtp = async (req, res) => {
                     <div class="otp-container">
                         <h2>Here Is Your One Time Password</h2>
                         <p class="otp-details">Valid for 15 minutes only!</p>
-                        <div class="otp-code">2345</div>
+                        <div class="otp-code">${otp}</div>
                     </div>
             
                     <!-- Footer Section -->
@@ -341,7 +341,100 @@ exports.forgotPassword = async (req, res) => {
             from: process.env.MAIL_USER,
             to: email,
             subject: 'Password Reset OTP',
-            text: `Your OTP for password reset is ${otp}. It will expire in 10 minutes.`
+            html: `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Password Reset OTP</title>
+                <style>
+                    body {
+                        margin: 0;
+                        padding: 0;
+                        font-family: Arial, sans-serif;
+                        background-color: #f2f2f2;
+                    }
+                    .container {
+                        max-width: 600px;
+                        margin: 0 auto;
+                        background-color: #ffffff;
+                        padding: 20px;
+                        border-radius: 8px;
+                        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+                    }
+                    .header {
+                        text-align: center;
+                        padding: 20px;
+                        background-color: #6A5ACD; /* Soft lavender color */
+                        border-top-left-radius: 8px;
+                        border-top-right-radius: 8px;
+                    }
+                    .header h1 {
+                        margin: 0;
+                        color: #fff;
+                        font-size: 24px;
+                    }
+                    .otp-container {
+                        text-align: center;
+                        padding: 20px;
+                    }
+                    .otp-container h2 {
+                        color: #333;
+                    }
+                    .otp-code {
+                        font-size: 32px;
+                        color: #6A5ACD;
+                        margin: 20px 0;
+                        font-weight: bold;
+                    }
+                    .otp-details {
+                        font-size: 14px;
+                        color: #999;
+                    }
+                    .footer {
+                        text-align: center;
+                        padding: 20px;
+                        background-color: #f2f2f2;
+                        border-bottom-left-radius: 8px;
+                        border-bottom-right-radius: 8px;
+                    }
+                    .footer p {
+                        color: #666;
+                        font-size: 12px;
+                    }
+                    .footer a {
+                        text-decoration: none;
+                        color: #6A5ACD;
+                        margin: 0 10px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <!-- Header Section -->
+                    <div class="header">
+                        <h1>Password Reset OTP</h1>
+                    </div>
+
+                    <!-- OTP Section -->
+                    <div class="otp-container">
+                        <h2>Here Is Your One Time Password (OTP)</h2>
+                        <p class="otp-details">Please use the OTP below to reset your password. The OTP is valid for 10 minutes.</p>
+                        <div class="otp-code">${otp}</div>
+                        <p class="otp-details">If you did not request a password reset, please ignore this email.</p>
+                    </div>
+
+                    <!-- Footer Section -->
+                    <div class="footer">
+                        <p>If you have any issues, please feel free to contact our support team at <a href="mailto:support@yourcompany.com">support@yourcompany.com</a></p>
+                        <p>FAQs | Terms & Conditions | Privacy Policy</p>
+                        <p>&copy; ${new Date().getFullYear()} Your Company. All rights reserved.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+             `,
         };
 
         await transporter.sendMail(mailOptions);
