@@ -289,33 +289,31 @@ exports.updatePassword = async (req, res) => {
 //hander for delete account
 exports.deleteAccount = async (req, res) => {
     try {
-        const { password } = req.body; // Extract password from request
+        const { password } = req.body;
 
-        // Find the user by ID from the token (assuming `req.user` contains the user's ID)
         const user = await User.findById(req.user.id);
-
-        // Check if user exists
         if (!user) {
             return res.status(404).json({ error: "User not found." });
         }
 
-        // Check if the provided password matches the hashed password in the database
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
         if (!isPasswordCorrect) {
             return res.status(400).json({ error: "Incorrect password." });
         }
-        
-        // Delete the user if the password is correct
+
+        // Delete projects associated with the user
+        await Project.deleteMany({ userid: req.user.id });
+
+        // Delete the user
         await user.deleteOne();
-        
 
-
-        res.status(200).json({ message: "Account deleted successfully." });
+        res.status(200).json({ message: "Account and projects deleted successfully." });
     } catch (error) {
         console.error("Error while deleting account:", error);
         return res.status(500).json({ error: "Internal server error. Please try again later." });
     }
 };
+
 
 exports.forgotPassword = async (req, res) => {
     const { email } = req.body;
