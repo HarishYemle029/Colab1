@@ -28,14 +28,112 @@ exports.sendOtp = async (req, res) => {
 
         const transporter = nodemailer.createTransport({
             service: 'Gmail',
-            auth: { user: process.env.MAIL_USER, pass: process.env.MAIL_PASS },
+            auth: {
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASS,
+            },
         });
 
         const mailOptions = {
             from: process.env.MAIL_USER,
             to: email,
             subject: 'Your OTP Code',
-            text: `Your OTP code is ${otp}`,
+            html: `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>OTP Verification</title>
+                <style>
+                    body {
+                        margin: 0;
+                        padding: 0;
+                        font-family: Arial, sans-serif;
+                        background-color: #f2f2f2;
+                    }
+                    .container {
+                        max-width: 600px;
+                        margin: 0 auto;
+                        background-color: #ffffff;
+                        padding: 20px;
+                        border-radius: 8px;
+                        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+                    }
+                    .header {
+                        text-align: center;
+                        padding: 20px;
+                        background-color: #6A5ACD; /* Soft lavender color */
+                        border-top-left-radius: 8px;
+                        border-top-right-radius: 8px;
+                    }
+                    .header img {
+                        width: 150px;
+                        height: auto;
+                    }
+                    .otp-container {
+                        text-align: center;
+                        padding: 20px;
+                    }
+                    .otp-container h2 {
+                        color: #333;
+                    }
+                    .otp-code {
+                        font-size: 32px;
+                        color: #6A5ACD; /* Slightly darker shade of purple */
+                        margin: 20px 0;
+                    }
+                    .otp-details {
+                        font-size: 14px;
+                        color: #999;
+                    }
+                    .footer {
+                        text-align: center;
+                        padding: 20px;
+                        background-color: #DCDCDC; /* Light gray background */
+                        border-bottom-left-radius: 8px;
+                        border-bottom-right-radius: 8px;
+                    }
+                    .footer a {
+                        text-decoration: none;
+                        color: #6A5ACD;
+                        margin: 0 10px;
+                    }
+                    .footer p {
+                        color: #666;
+                        font-size: 12px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <!-- Header Section -->
+                    <div class="header">
+                        <img src="https://res.cloudinary.com/dtyo4nbl2/image/upload/v1725026858/WhatsApp_Image_2024-08-29_at_03.59.21_4b049ea2_o5ff8z.jpg" alt="Company Logo">
+                    </div>
+            
+                    <!-- OTP Section -->
+                    <div class="otp-container">
+                        <h2>Here Is Your One Time Password</h2>
+                        <p class="otp-details">Valid for 15 minutes only!</p>
+                        <div class="otp-code">2345</div>
+                    </div>
+            
+                    <!-- Footer Section -->
+                    <div class="footer">
+                        <p>FAQs | Terms & Conditions | Contact Us</p>
+                        <div>
+                            <a href="#">LinkedIn</a>
+                            <a href="#">Twitter</a>
+                            <a href="#">Instagram</a>
+                        </div>
+                        <p>If you have any questions regarding your OTP, please visit our Privacy Policy.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            
+            `,
         };
 
         await transporter.sendMail(mailOptions);
