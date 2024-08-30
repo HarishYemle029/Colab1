@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const otpGenerator = require('otp-generator');
 const bcrypt = require("bcryptjs");
+const Project = require("../models/projectModel");
 
 // Step 1: Enter Email and Send OTP
 exports.sendOtp = async (req, res) => {
@@ -291,28 +292,35 @@ exports.deleteAccount = async (req, res) => {
     try {
         const { password } = req.body;
 
+        // Retrieve user from the request's token
         const user = await User.findById(req.user.id);
+
         if (!user) {
+            console.error("User not found.");
             return res.status(404).json({ error: "User not found." });
         }
 
+        // Check password
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
         if (!isPasswordCorrect) {
+            console.error("Incorrect password.");
             return res.status(400).json({ error: "Incorrect password." });
         }
 
-        // Delete projects associated with the user
-        await Project.deleteMany({ userid: req.user.id });
+        // Delete user's projects
+        const deletedProjects = await Project.deleteMany({ userid: user._id });
+        console.log(`${deletedProjects.deletedCount} projects deleted for user ${user._id}`);
 
-        // Delete the user
+        // Delete user account
         await user.deleteOne();
 
-        res.status(200).json({ message: "Account and projects deleted successfully." });
+        res.status(200).json({ message: "Account and associated projects deleted successfully." });
     } catch (error) {
         console.error("Error while deleting account:", error);
-        return res.status(500).json({ error: "Internal server error. Please try again later." });
+        res.status(500).json({ error: "Internal server error. Please try again later." });
     }
 };
+
 
 
 exports.forgotPassword = async (req, res) => {
