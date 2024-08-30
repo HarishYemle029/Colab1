@@ -4,7 +4,8 @@ const Profile =require('../models/profile1');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const otpGenerator = require('otp-generator');
-const bcrypt = require("bcryptjs")
+const bcrypt = require("bcryptjs");
+const Project = require("../models/projectModel")
 
 // Step 1: Enter Email and Send OTP
 exports.sendOtp = async (req, res) => {
@@ -304,9 +305,11 @@ exports.deleteAccount = async (req, res) => {
         if (!isPasswordCorrect) {
             return res.status(400).json({ error: "Incorrect password." });
         }
-        await project.deleteMany({ createdBy: user._id });
+        await Project.deleteMany({ createdBy: user._id });
         // Delete the user if the password is correct
         await user.deleteOne();
+        
+
 
         res.status(200).json({ message: "Account deleted successfully." });
     } catch (error) {
