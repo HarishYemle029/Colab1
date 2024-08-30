@@ -2,7 +2,6 @@ const Project = require("../models/projectModel");
 
 // Create a new project with UserId provided in the request body
 exports.createProject = async (req, res) => {
-    console.log("Request received at createProject");
     try {
       console.log("Request Body:", req.body);
       const { projectname, description, roles, tags, userid } = req.body;

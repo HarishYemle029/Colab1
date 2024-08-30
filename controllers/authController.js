@@ -115,7 +115,7 @@ exports.sendOtp = async (req, res) => {
                     <!-- OTP Section -->
                     <div class="otp-container">
                         <h2>Here Is Your One Time Password</h2>
-                        <p class="otp-details">Valid for 15 minutes only!</p>
+                        <p class="otp-details">Valid for 10 minutes only!</p>
                         <div class="otp-code">${otp}</div>
                     </div>
             
@@ -305,12 +305,15 @@ exports.deleteAccount = async (req, res) => {
             return res.status(400).json({ error: "Incorrect password." });
         }
 
+        // Delete all projects created by the user
+        await Project.deleteMany({ createdBy: user._id });
+
         // Delete the user if the password is correct
         await user.deleteOne();
 
-        res.status(200).json({ message: "Account deleted successfully." });
+        res.status(200).json({ message: "Account and associated projects deleted successfully." });
     } catch (error) {
-        console.error("Error while deleting account:", error);
+        console.error("Error while deleting account and projects:", error);
         return res.status(500).json({ error: "Internal server error. Please try again later." });
     }
 };
