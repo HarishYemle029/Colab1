@@ -30,7 +30,7 @@ const UserSchema = new mongoose.Schema({
     imageUrl: {
         type: String,
         default: function() {
-            return `https://api.dicebear.com/5.x/initials/svg?seed=${encodeURIComponent(this.username || 'default')};`
+            return `https://api.dicebear.com/5.x/initials/svg?seed=${encodeURIComponent(this.username)};`
         },
     },
 

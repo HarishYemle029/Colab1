@@ -15,6 +15,8 @@ exports.updateUserProfile = async (req, res) => {
             const file = req.files.profileImage;
             const uploadResult = await uploadFileToCloudinary(file, process.env.FOLDER_NAME);
             profileImageUrl = uploadResult.secure_url;
+        } else{
+             profileImageUrl =`https://api.dicebear.com/5.x/initials/svg?seed=${encodeURIComponent(username || user.username)}`;
         }
 
         // Fetch user to update their information
@@ -24,12 +26,11 @@ exports.updateUserProfile = async (req, res) => {
         // Update the username if provided
         if (username) {
             user.username = username;
+            user.imageUrl = profileImageUrl
             await user.save(); // Save the updated user data
 
             // If the user changes their username and no profile image is set, generate a new default image
-            if (!profileImageUrl) {
-                profileImageUrl = `https://api.dicebear.com/5.x/initials/svg?seed=${encodeURIComponent(username)}`;
-            }
+           
         }
 
         // Update or create the profile
@@ -40,7 +41,6 @@ exports.updateUserProfile = async (req, res) => {
                 location,
                 description,
                 expertise,
-                ...(profileImageUrl && { profileImage: profileImageUrl }),
             },
             { new: true, upsert: true }
         );
