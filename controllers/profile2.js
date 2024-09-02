@@ -41,6 +41,7 @@ exports.updateUserProfile = async (req, res) => {
                 location,
                 description,
                 expertise,
+                ...(profileImageUrl && { profileImage: profileImageUrl }),
             },
             { new: true, upsert: true }
         );
